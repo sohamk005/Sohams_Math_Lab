@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soham's Math Lab</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        input, button {
+            margin: 10px;
+        }
+        img {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome To Soham's Math Lab</h1>
+    <p>You can do some interesting math here</p>
+
+    <h2>Solve Quadratic Equation</h2>
+    <input type="number" id="quad_a" placeholder="Coefficient of x^2">
+    <input type="number" id="quad_b" placeholder="Coefficient of x">
+    <input type="number" id="quad_c" placeholder="Constant term">
+    <button onclick="solveEquation('quadratic')">Solve Quadratic</button>
+    
+    <h2>Solve Cubic Equation</h2>
+    <input type="number" id="cubic_a" placeholder="Coefficient of x^3">
+    <input type="number" id="cubic_b" placeholder="Coefficient of x^2">
+    <input type="number" id="cubic_c" placeholder="Coefficient of x">
+    <input type="number" id="cubic_d" placeholder="Constant term">
+    <button onclick="solveEquation('cubic')">Solve Cubic</button>
+
+    <div id="result"></div>
+    <img id="plot" src="">
+
+    <script>
+        function solveEquation(type) {
+            let a, b, c, d;
+            if (type === 'quadratic') {
+                a = document.getElementById('quad_a').value;
+                b = document.getElementById('quad_b').value;
+                c = document.getElementById('quad_c').value;
+            } else {
+                a = document.getElementById('cubic_a').value;
+                b = document.getElementById('cubic_b').value;
+                c = document.getElementById('cubic_c').value;
+                d = document.getElementById('cubic_d').value;
+            }
+            
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ type, a, b, c, d })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 'Roots: ' + data.roots.join(', ');
+                document.getElementById('plot').src = 'data:image/png;base64,' + data.plot_url;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
